@@ -1,4 +1,4 @@
-me: box-golang_node
+name: box-golang_node
 version: 0.0.1
 inherits: wercker/ubuntu12.04-webessentials@1.0.0
 type : main
@@ -48,7 +48,7 @@ default-build:
       build:
         # The steps that will be executed on build
         steps:
-          # Sets the go workspace and places you package
+          # Sets the go workspace and places you pmackage
           # at the right place in the workspace tree
           - setup-go-workspace
           # Gets the dependencies

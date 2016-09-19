@@ -1,9 +1,9 @@
-name: box-golang_node
-version: 0.0.1
-inherits: wercker/ubuntu12.04-webessentials@1.0.0
+name: golang
+version: 1.0.7
+inherits: wercker/ubuntu12.04-webessentials@1.0.4
 type : main
 platform : ubuntu@12.04
-description : golang and nodejs
+description : golang + nodejs
 keywords:
   - golang
   - go
@@ -15,16 +15,18 @@ packages :
   - bzr
 script : |
   version="1.7"
+  
   sudo apt-get update
   sudo apt-get install bzr
   sudo apt-get install mercurial
+  sudo apt-get install lsof
   wget http://golang.org/dl/go${version}.linux-amd64.tar.gz
   sudo tar -C /usr/local -xzf go${version}.linux-amd64.tar.gz
   echo "export PATH=$PATH:/usr/local/go/bin" | sudo tee -a /etc/profile
   rm go${version}.linux-amd64.tar.gz
   # Set GOPATH
-  export GOPATH="$HOME/.go"
-  echo 'export GOPATH="$HOME/.go"' | sudo tee -a /etc/profile
+  export GOPATH="$HOME/go"
+  echo 'export GOPATH="$HOME/go"' | sudo tee -a /etc/profile
   # Adds go bin directory to path so tools
   # and buils are available on the commandline
   export PATH="$PATH:$GOPATH/bin"
@@ -35,6 +37,12 @@ box-detect:
   priority : 900
   version :
   detect:
+    - files:
+      - .godir
+    - files:
+      - main.go
+    - files:
+      - app.go
     - files:
       - server.go
 
@@ -48,7 +56,7 @@ default-build:
       build:
         # The steps that will be executed on build
         steps:
-          # Sets the go workspace and places you pmackage
+          # Sets the go workspace and places you package
           # at the right place in the workspace tree
           - setup-go-workspace
           # Gets the dependencies
@@ -57,7 +65,7 @@ default-build:
               code: |
                 cd $WERCKER_SOURCE_DIR
                 go version
-                go get -t ./...
+                go get ./...
           # Build the project
           - script:
               name: go build
